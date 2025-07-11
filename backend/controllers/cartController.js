@@ -3,10 +3,20 @@ import Cart from '../models/Cart.js';
 
 // @desc    Get user's cart
 // @route   GET /api/cart
+// @route   GET /api/cart
 const getCart = asyncHandler(async (req, res) => {
-  const cart = await Cart.findOne({ user: req.user._id });
-  res.json(cart || { items: [] });
+  const cart = await Cart.findOne({ user: req.user._id }).populate({
+    path: 'items.product',
+    select: 'name brand category price image',
+  });
+
+  if (!cart) {
+    return res.status(404).json({ message: "Cart not found" });
+  }
+
+  res.json(cart);
 });
+
 
 // @desc    Add item to cart
 // @route   POST /api/cart

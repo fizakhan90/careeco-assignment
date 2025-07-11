@@ -19,6 +19,7 @@ interface CartItem {
   quantity: number
   selectedColor?: string
   selectedSize?: string
+
 }
 
 interface CartState {
@@ -144,7 +145,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         const savedCart = localStorage.getItem("cart")
         if (savedCart) {
           try {
-            const cartItems = JSON.parse(savedCart)
+            const cartItems = JSON.parse(savedCart)ck to Store
+
             dispatch({ type: "LOAD_CART", payload: cartItems })
           } catch (error) {
             console.error("Error loading cart from localStorage:", error)
