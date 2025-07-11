@@ -77,9 +77,7 @@ const getAllProducts = asyncHandler(async (req, res) => {
   res.json(products);
 });
 
-// GET /api/products/category/:category
-
-// @desc    Search within a category using MongoDB Atlas $search
+// @desc    Search products within a category with optional keyword
 // @route   GET /api/products/category/:category?q=query
 const searchInCategory = asyncHandler(async (req, res) => {
   const query = req.query.q?.trim();
@@ -89,36 +87,36 @@ const searchInCategory = asyncHandler(async (req, res) => {
     return res.status(400).json({ message: "Category is required" });
   }
 
-  const searchStage = {
-    $search: {
-      index: "default",
-      compound: {
-        must: [
-          {
-            text: {
-              query: category,
-              path: "category",
-              fuzzy: {}, // so 'shoe' matches 'shoes'
-            },
-          },
-        ],
-        should: query
-          ? [
-              {
-                text: {
-                  query: query,
-                  path: ["name", "description", "brand"],
-                  fuzzy: {},
-                },
+  const pipeline = [
+    {
+      $search: {
+        index: "default",
+        compound: {
+          must: [
+            {
+              text: {
+                query: category,
+                path: "category",
+                fuzzy: {}, // optional fuzzy match for category
               },
-            ]
-          : [],
+            },
+          ],
+          ...(query
+            ? {
+                should: [
+                  {
+                    text: {
+                      query: query,
+                      path: ["name", "description", "brand"],
+                      fuzzy: {}, // typo-tolerant
+                    },
+                  },
+                ],
+              }
+            : {}),
+        },
       },
     },
-  };
-
-  const results = await Product.aggregate([
-    searchStage,
     { $limit: 20 },
     {
       $project: {
@@ -126,13 +124,19 @@ const searchInCategory = asyncHandler(async (req, res) => {
         name: 1,
         brand: 1,
         category: 1,
+        price: 1,
+        image: 1,
+        rating: 1,
+        numReviews: 1,
         score: { $meta: "searchScore" },
       },
     },
-  ]);
+  ];
 
+  const results = await Product.aggregate(pipeline);
   res.json(results);
 });
+
 
 export {
   searchProducts,

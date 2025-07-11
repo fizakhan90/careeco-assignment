@@ -258,7 +258,7 @@ export default function ProductDetailPage() {
       {/* 🚀 Better Deals Carousel */}
       {betterDeals.length > 0 && (
         <div className="mt-16">
-          <h2 className="text-2xl font-bold mb-4">Better Deals</h2>
+          <h2 className="text-2xl font-bold mb-4">Similar Items / Better Deals</h2>
           <div className="flex gap-4 overflow-x-auto snap-x snap-mandatory scroll-smooth pb-2">
             {betterDeals.map((deal) => (
               <div key={deal._id} className="snap-start flex-shrink-0 w-72">

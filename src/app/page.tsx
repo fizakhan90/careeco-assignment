@@ -73,14 +73,22 @@ export default function HomePage() {
 
   useEffect(() => {
   const fetchSearchedProducts = async () => {
-    if (!searchQuery.trim()) {
-      setFilteredProducts(products); // Show all if query is empty
-      return;
-    }
-
     setLoading(true);
     try {
-      const res = await fetch(`http://localhost:5000/api/products/search?q=${encodeURIComponent(searchQuery)}`);
+      let url = "";
+
+      // 👇 If exactly one category is selected, use category-based route
+      if (selectedCategories.length === 1) {
+        const category = encodeURIComponent(selectedCategories[0]);
+        const q = encodeURIComponent(searchQuery.trim());
+        url = `http://localhost:5000/api/products/category/${category}?q=${q}`;
+      } else if (searchQuery.trim()) {
+        url = `http://localhost:5000/api/products/search?q=${encodeURIComponent(searchQuery.trim())}`;
+      } else {
+        url = "http://localhost:5000/api/products"; // fallback
+      }
+
+      const res = await fetch(url);
       const data = await res.json();
       setFilteredProducts(data);
     } catch (err) {
@@ -91,7 +99,8 @@ export default function HomePage() {
   };
 
   fetchSearchedProducts();
-}, [searchQuery, products]);
+}, [searchQuery, selectedCategories]);
+
 
 
   useEffect(() => {
