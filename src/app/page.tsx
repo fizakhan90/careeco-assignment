@@ -72,6 +72,29 @@ export default function HomePage() {
   }, []);
 
   useEffect(() => {
+  const fetchSearchedProducts = async () => {
+    if (!searchQuery.trim()) {
+      setFilteredProducts(products); // Show all if query is empty
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const res = await fetch(`http://localhost:5000/api/products/search?q=${encodeURIComponent(searchQuery)}`);
+      const data = await res.json();
+      setFilteredProducts(data);
+    } catch (err) {
+      console.error("Search failed", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  fetchSearchedProducts();
+}, [searchQuery, products]);
+
+
+  useEffect(() => {
     const filtered = products.filter((p) => {
       const matchesSearch =
         p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||

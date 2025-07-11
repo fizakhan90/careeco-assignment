@@ -23,8 +23,12 @@ const searchProducts = asyncHandler(async (req, res) => {
       $project: {
         _id: 1,
         name: 1,
+        price: 1,
         brand: 1,
         category: 1,
+        image: 1,
+        rating: 1,
+        numReviews: 1,
         score: { $meta: "searchScore" },
       },
     },
@@ -47,15 +51,15 @@ const getProductById = asyncHandler(async (req, res) => {
   const betterDeals = await Product.find({
     _id: { $ne: product._id }, // exclude current product
     category: product.category,
-    price: { $lte: product.price }
+    price: { $lte: product.price },
   })
     .sort({ price: 1 }) // lowest price first
     .limit(5)
-    .select('name price brand category');
+    .select("name price brand category");
 
   res.json({
     product,
-    betterDeals
+    betterDeals,
   });
 });
 
@@ -82,35 +86,35 @@ const searchInCategory = asyncHandler(async (req, res) => {
   const category = req.params.category;
 
   if (!category) {
-    return res.status(400).json({ message: 'Category is required' });
+    return res.status(400).json({ message: "Category is required" });
   }
 
   const searchStage = {
     $search: {
-      index: 'default',
+      index: "default",
       compound: {
         must: [
           {
             text: {
               query: category,
-              path: 'category',
-              fuzzy: {} // so 'shoe' matches 'shoes'
-            }
-          }
+              path: "category",
+              fuzzy: {}, // so 'shoe' matches 'shoes'
+            },
+          },
         ],
         should: query
           ? [
               {
                 text: {
                   query: query,
-                  path: ['name', 'description', 'brand'],
-                  fuzzy: {}
-                }
-              }
+                  path: ["name", "description", "brand"],
+                  fuzzy: {},
+                },
+              },
             ]
-          : []
-      }
-    }
+          : [],
+      },
+    },
   };
 
   const results = await Product.aggregate([
@@ -122,14 +126,13 @@ const searchInCategory = asyncHandler(async (req, res) => {
         name: 1,
         brand: 1,
         category: 1,
-        score: { $meta: 'searchScore' }
-      }
-    }
+        score: { $meta: "searchScore" },
+      },
+    },
   ]);
 
   res.json(results);
 });
-
 
 export {
   searchProducts,
