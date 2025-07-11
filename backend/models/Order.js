@@ -29,6 +29,7 @@ const orderSchema = new mongoose.Schema({
   status: { type: String, default: 'Processing' },
   isPaid: { type: Boolean, default: false },
   paidAt: { type: Date },
+  paymentMethod: { type: String },
 }, { timestamps: true });
 
 
