@@ -1,18 +1,28 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-
   images: {
     remotePatterns: [
       {
         protocol: 'https',
         hostname: 'via.placeholder.com',
         port: '',
-        pathname: '/**', // This allows any path on that hostname
+        pathname: '/**',
       },
-    ]
-  }
-  /* config options here */
+      {
+        protocol: 'https',
+        hostname: 'assets.ajio.com',
+        port: '',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'images.unsplash.com',
+        port: '',
+        pathname: '/**',
+      },
+    ],
+  },
 };
 
 export default nextConfig;

@@ -41,7 +41,7 @@ export default function ProductCard({ product, viewMode = "grid" }: ProductCardP
         <div className={`relative overflow-hidden ${isListView ? "w-48 flex-shrink-0" : "aspect-square"}`}>
           <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10" />
           <Image
-            src="/placeholder.svg?height=300&width=300"
+            src={product.image || "/placeholder.png"}
             alt={product.name}
             fill
             className={`object-cover transition-transform duration-500 ${isHovered ? "scale-110" : "scale-100"}`}
