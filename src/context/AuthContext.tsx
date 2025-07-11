@@ -6,6 +6,8 @@ interface User {
   _id: string;
   name: string;
   email: string;
+  avatar?: string // ✅ Add this line
+
 }
 
 interface AuthContextType {
@@ -42,7 +44,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const login = async (email: string, password: string): Promise<boolean> => {
     try {
-      const res = await fetch('/api/users/login', {
+      const res = await fetch('http://localhost:5000/api/users/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -69,7 +71,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     password: string
   ): Promise<boolean> => {
     try {
-      const res = await fetch('/api/users/register', {
+      const res = await fetch('http://localhost:5000/api/users/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

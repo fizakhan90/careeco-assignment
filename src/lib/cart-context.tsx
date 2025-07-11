@@ -1,8 +1,14 @@
 "use client"
 
-import type React from "react"
-
-import { createContext, useContext, useReducer, useEffect } from "react"
+import React, { createContext, useContext, useReducer, useEffect } from "react"
+import { useAuth } from "@/context/AuthContext"
+import {
+  getCartFromServer,
+  addToServerCart,
+  removeFromServerCart,
+  clearServerCart,
+} from "./cartApi"
+import api from "./api"
 
 interface CartItem {
   _id: string
@@ -44,7 +50,7 @@ const cartReducer = (state: CartState, action: CartAction): CartState => {
         (item) =>
           item._id === action.payload._id &&
           item.selectedColor === action.payload.selectedColor &&
-          item.selectedSize === action.payload.selectedSize,
+          item.selectedSize === action.payload.selectedSize
       )
 
       let newItems: CartItem[]
@@ -54,7 +60,7 @@ const cartReducer = (state: CartState, action: CartAction): CartState => {
           item.selectedColor === action.payload.selectedColor &&
           item.selectedSize === action.payload.selectedSize
             ? { ...item, quantity: item.quantity + action.payload.quantity }
-            : item,
+            : item
         )
       } else {
         newItems = [...state.items, action.payload]
@@ -76,7 +82,7 @@ const cartReducer = (state: CartState, action: CartAction): CartState => {
 
     case "UPDATE_QUANTITY": {
       const newItems = state.items.map((item) =>
-        item._id === action.payload.id ? { ...item, quantity: action.payload.quantity } : item,
+        item._id === action.payload.id ? { ...item, quantity: action.payload.quantity } : item
       )
       const total = newItems.reduce((sum, item) => sum + item.price * item.quantity, 0)
       const itemCount = newItems.reduce((sum, item) => sum + item.quantity, 0)
@@ -105,30 +111,81 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     itemCount: 0,
   })
 
-  // Load cart from localStorage on mount
+  const { user } = useAuth()
+
+  // Load cart from backend (if logged in) or localStorage (guest)
   useEffect(() => {
-    const savedCart = localStorage.getItem("cart")
-    if (savedCart) {
-      try {
-        const cartItems = JSON.parse(savedCart)
-        dispatch({ type: "LOAD_CART", payload: cartItems })
-      } catch (error) {
-        console.error("Error loading cart from localStorage:", error)
+    const loadCart = async () => {
+      if (user) {
+        try {
+          const serverCart = await getCartFromServer()
+
+          const items = await Promise.all(
+            serverCart.items.map(async (item: any) => {
+              const res = await api.get(`/products/${item.product}`)
+              const product = res.data
+              return {
+                _id: product._id,
+                name: product.name,
+                brand: product.brand,
+                price: product.price,
+                image: product.image,
+                quantity: item.quantity,
+                selectedSize: item.size,
+              }
+            })
+          )
+
+          dispatch({ type: "LOAD_CART", payload: items })
+        } catch (err) {
+          console.error("Failed to load cart from server:", err)
+        }
+      } else {
+        const savedCart = localStorage.getItem("cart")
+        if (savedCart) {
+          try {
+            const cartItems = JSON.parse(savedCart)
+            dispatch({ type: "LOAD_CART", payload: cartItems })
+          } catch (error) {
+            console.error("Error loading cart from localStorage:", error)
+          }
+        }
       }
     }
-  }, [])
 
-  // Save cart to localStorage whenever it changes
+    loadCart()
+  }, [user])
+
+  // Persist to localStorage only for guests
   useEffect(() => {
-    localStorage.setItem("cart", JSON.stringify(state.items))
-  }, [state.items])
+    if (!user) {
+      localStorage.setItem("cart", JSON.stringify(state.items))
+    }
+  }, [state.items, user])
 
-  const addToCart = (item: Omit<CartItem, "quantity">) => {
-    dispatch({ type: "ADD_ITEM", payload: { ...item, quantity: 1 } })
+  const addToCart = async (item: Omit<CartItem, "quantity">) => {
+    const newItem = { ...item, quantity: 1 }
+    dispatch({ type: "ADD_ITEM", payload: newItem })
+
+    if (user) {
+      try {
+        await addToServerCart(item._id, 1, item.selectedSize)
+      } catch (err) {
+        console.error("Failed to sync addToCart with server:", err)
+      }
+    }
   }
 
-  const removeFromCart = (id: string) => {
+  const removeFromCart = async (id: string) => {
     dispatch({ type: "REMOVE_ITEM", payload: id })
+
+    if (user) {
+      try {
+        await removeFromServerCart(id)
+      } catch (err) {
+        console.error("Failed to remove from server cart:", err)
+      }
+    }
   }
 
   const updateQuantity = (id: string, quantity: number) => {
@@ -136,11 +193,19 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       removeFromCart(id)
     } else {
       dispatch({ type: "UPDATE_QUANTITY", payload: { id, quantity } })
+      // 📝 Optionally: sync quantity update to backend if needed
     }
   }
 
-  const clearCart = () => {
+  const clearCart = async () => {
     dispatch({ type: "CLEAR_CART" })
+    if (user) {
+      try {
+        await clearServerCart()
+      } catch (err) {
+        console.error("Failed to clear cart on server:", err)
+      }
+    }
   }
 
   return (

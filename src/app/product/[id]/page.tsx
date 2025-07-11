@@ -265,9 +265,9 @@ export default function ProductDetailPage() {
                 <ProductCard
                   product={{
                     ...deal,
-                    images: [deal.image ?? "/placeholder.svg"],
+                    images: [deal.images ?? "/placeholder.svg"],
                     rating: deal.rating ?? 4,
-                    reviews: deal.numReviews ?? 0,
+                    reviews: deal.reviews ?? 0,
                     inStock: deal.isAvailable ?? true,
                     features: [],
                   }}
