@@ -38,12 +38,25 @@ const searchProducts = asyncHandler(async (req, res) => {
 const getProductById = asyncHandler(async (req, res) => {
   const product = await Product.findById(req.params.id);
 
-  if (product) {
-    res.json(product);
-  } else {
+  if (!product) {
     res.status(404);
     throw new Error("Product not found");
   }
+
+  // Suggest better deals (similar category, lower or equal price, excluding current product)
+  const betterDeals = await Product.find({
+    _id: { $ne: product._id }, // exclude current product
+    category: product.category,
+    price: { $lte: product.price }
+  })
+    .sort({ price: 1 }) // lowest price first
+    .limit(5)
+    .select('name price brand category');
+
+  res.json({
+    product,
+    betterDeals
+  });
 });
 
 // @desc    Suggest products if not found or show better deals
@@ -62,15 +75,61 @@ const getAllProducts = asyncHandler(async (req, res) => {
 
 // GET /api/products/category/:category
 
+// @desc    Search within a category using MongoDB Atlas $search
+// @route   GET /api/products/category/:category?q=query
 const searchInCategory = asyncHandler(async (req, res) => {
+  const query = req.query.q?.trim();
   const category = req.params.category;
 
-  const products = await Product.find({
-    category: { $regex: category, $options: "i" },
-  });
+  if (!category) {
+    return res.status(400).json({ message: 'Category is required' });
+  }
 
-  res.json(products);
+  const searchStage = {
+    $search: {
+      index: 'default',
+      compound: {
+        must: [
+          {
+            text: {
+              query: category,
+              path: 'category',
+              fuzzy: {} // so 'shoe' matches 'shoes'
+            }
+          }
+        ],
+        should: query
+          ? [
+              {
+                text: {
+                  query: query,
+                  path: ['name', 'description', 'brand'],
+                  fuzzy: {}
+                }
+              }
+            ]
+          : []
+      }
+    }
+  };
+
+  const results = await Product.aggregate([
+    searchStage,
+    { $limit: 20 },
+    {
+      $project: {
+        _id: 1,
+        name: 1,
+        brand: 1,
+        category: 1,
+        score: { $meta: 'searchScore' }
+      }
+    }
+  ]);
+
+  res.json(results);
 });
+
 
 export {
   searchProducts,
