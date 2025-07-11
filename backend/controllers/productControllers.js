@@ -1,22 +1,22 @@
-import asyncHandler from 'express-async-handler';
-import Product from '../models/Product.js';
-import suggestAlternatives from '../utils/suggestHelper.js';
+import asyncHandler from "express-async-handler";
+import Product from "../models/Product.js";
+import suggestAlternatives from "../utils/suggestHelper.js";
 
 // @desc    Get products by search query or all
 // @route   GET /api/products/search?q=
 const searchProducts = asyncHandler(async (req, res) => {
-  const query = req.query.q || '';
+  const query = req.query.q || "";
 
   const results = await Product.aggregate([
     {
       $search: {
-        index: 'default',
+        index: "default",
         text: {
           query: query,
-          path: ['name', 'description', 'brand', 'category'],
-          fuzzy: {} // optional: for typo-tolerance
-        }
-      }
+          path: ["name", "description", "brand", "category"],
+          fuzzy: {}, // optional: for typo-tolerance
+        },
+      },
     },
     { $limit: 10 },
     {
@@ -25,9 +25,9 @@ const searchProducts = asyncHandler(async (req, res) => {
         name: 1,
         brand: 1,
         category: 1,
-        score: { $meta: 'searchScore' }
-      }
-    }
+        score: { $meta: "searchScore" },
+      },
+    },
   ]);
 
   res.json(results);
@@ -42,21 +42,40 @@ const getProductById = asyncHandler(async (req, res) => {
     res.json(product);
   } else {
     res.status(404);
-    throw new Error('Product not found');
+    throw new Error("Product not found");
   }
 });
 
 // @desc    Suggest products if not found or show better deals
 // @route   GET /api/products/suggest?q=
 const suggestProducts = asyncHandler(async (req, res) => {
-  const query = req.query.q || '';
+  const query = req.query.q || "";
   const suggestions = await suggestAlternatives(query);
   res.json(suggestions);
 });
 
+// @route   GET /api/products/
 const getAllProducts = asyncHandler(async (req, res) => {
   const products = await Product.find({}).limit(20); // you can paginate later
   res.json(products);
 });
 
-export { searchProducts, getAllProducts,getProductById, suggestProducts };
+// GET /api/products/category/:category
+
+const searchInCategory = asyncHandler(async (req, res) => {
+  const category = req.params.category;
+
+  const products = await Product.find({
+    category: { $regex: category, $options: "i" },
+  });
+
+  res.json(products);
+});
+
+export {
+  searchProducts,
+  getAllProducts,
+  getProductById,
+  suggestProducts,
+  searchInCategory,
+};
