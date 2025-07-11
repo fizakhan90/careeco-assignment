@@ -35,7 +35,9 @@ interface Product {
 }
 
 export default function ProductDetailPage() {
-  const params = useParams()
+  const { id } = useParams() as { id: string }
+
+
   const [product, setProduct] = useState<Product | null>(null)
   const [loading, setLoading] = useState(true)
   const [selectedImage, setSelectedImage] = useState(0)
@@ -54,17 +56,11 @@ export default function ProductDetailPage() {
   useEffect(() => {
   const fetchProduct = async () => {
     setLoading(true)
-
     try {
-      const res = await fetch(`/api/products/${params.id}`)
-
-      if (!res.ok) {
-        throw new Error("Product not found")
-      }
+      const res = await fetch(`/api/products/${id}`)
+      if (!res.ok) throw new Error("Product not found")
 
       const data = await res.json()
-
-      // Now data = { product: {...}, betterDeals: [...] }
       setProduct(data.product)
       setBetterDeals(data.betterDeals)
       setSelectedColor(data.product.colors?.[0] || "")
@@ -77,8 +73,8 @@ export default function ProductDetailPage() {
     }
   }
 
-  if (params.id) fetchProduct()
-}, [params.id])
+  if (id) fetchProduct()
+}, [id])
 
 
   const handleAddToCart = () => {
