@@ -19,7 +19,7 @@ interface CartItem {
   quantity: number
   selectedColor?: string
   selectedSize?: string
-
+  
 }
 
 interface CartState {
@@ -116,44 +116,78 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
   // Load cart from backend (if logged in) or localStorage (guest)
   useEffect(() => {
+    // const loadCart = async () => {
+    //   if (user) {
+    //     try {
+    //       const serverCart = await getCartFromServer()
+
+    //       const items = await Promise.all(
+    //         serverCart.items.map(async (item: any) => {
+    //           const res = await api.get(`/products/${item.product}`)
+    //           const product = res.data
+    //           return {
+    //             _id: product._id,
+    //             name: product.name,
+    //             brand: product.brand,
+    //             price: product.price,
+    //             image: product.image,
+    //             quantity: item.quantity,
+    //             selectedSize: item.size,
+    //           }
+    //         })
+    //       )
+
+    //       dispatch({ type: "LOAD_CART", payload: items })
+    //     } catch (err) {
+    //       console.error("Failed to load cart from server:", err)
+    //     }
+    //   } else {
+    //     const savedCart = localStorage.getItem("cart")
+    //     if (savedCart) {
+    //       try {
+    //         const cartItems = JSON.parse(savedCart)
+    //         dispatch({ type: "LOAD_CART", payload: cartItems })
+    //       } catch (error) {
+    //         console.error("Error loading cart from localStorage:", error)
+    //       }
+    //     }
+    //   }
+    // }
     const loadCart = async () => {
-      if (user) {
-        try {
-          const serverCart = await getCartFromServer()
+  if (user) {
+    try {
+      const serverCart = await getCartFromServer()
 
-          const items = await Promise.all(
-            serverCart.items.map(async (item: any) => {
-              const res = await api.get(`/products/${item.product}`)
-              const product = res.data
-              return {
-                _id: product._id,
-                name: product.name,
-                brand: product.brand,
-                price: product.price,
-                image: product.image,
-                quantity: item.quantity,
-                selectedSize: item.size,
-              }
-            })
-          )
-
-          dispatch({ type: "LOAD_CART", payload: items })
-        } catch (err) {
-          console.error("Failed to load cart from server:", err)
+      const items = serverCart.items.map((item: any) => {
+        const product = item.product
+        return {
+          _id: product._id,
+          name: product.name,
+          brand: product.brand,
+          price: product.price,
+          image: product.image,
+          quantity: item.quantity,
+          selectedSize: item.size,
         }
-      } else {
-        const savedCart = localStorage.getItem("cart")
-        if (savedCart) {
-          try {
-            const cartItems = JSON.parse(savedCart)ck to Store
+      })
 
-            dispatch({ type: "LOAD_CART", payload: cartItems })
-          } catch (error) {
-            console.error("Error loading cart from localStorage:", error)
-          }
-        }
+      dispatch({ type: "LOAD_CART", payload: items })
+    } catch (err) {
+      console.error("Failed to load cart from server:", err)
+    }
+  } else {
+    const savedCart = localStorage.getItem("cart")
+    if (savedCart) {
+      try {
+        const cartItems = JSON.parse(savedCart)
+        dispatch({ type: "LOAD_CART", payload: cartItems })
+      } catch (error) {
+        console.error("Error loading cart from localStorage:", error)
       }
     }
+  }
+}
+
 
     loadCart()
   }, [user])
