@@ -6,7 +6,8 @@ import Link from "next/link"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { ShoppingCart, Heart, Star, Eye } from 'lucide-react'
+import { ShoppingCart, Heart, Star, Eye, Check } from 'lucide-react'
+import { toast } from "sonner" // or your preferred toast library
 
 interface Product {
   _id: string;
@@ -14,22 +15,85 @@ interface Product {
   brand: string;
   category: string;
   description?: string;
-  price: number; // ← make sure this is NOT optional
+  price: number;
   image?: string;
   rating?: number;
   reviews?: number;
 }
 
-
 interface ProductCardProps {
   product: Product
   viewMode?: "grid" | "list"
+  onAddToCart?: (product: Product) => void
 }
 
-export default function ProductCard({ product, viewMode = "grid" }: ProductCardProps) {
+export default function ProductCard({ product, viewMode = "grid", onAddToCart }: ProductCardProps) {
   const [isWishlisted, setIsWishlisted] = useState(false)
   const [isHovered, setIsHovered] = useState(false)
+  const [isAdding, setIsAdding] = useState(false)
+  const [justAdded, setJustAdded] = useState(false)
   const isListView = viewMode === "list"
+
+  const handleAddToCart = async (e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    
+    if (isAdding) return
+    
+    setIsAdding(true)
+    
+    try {
+      // If onAddToCart prop is provided, use it
+      if (onAddToCart) {
+        await onAddToCart(product)
+      } else {
+        // Default cart implementation - you can customize this
+        await addToCart(product)
+      }
+      
+      // Show success state
+      setJustAdded(true)
+      toast.success(`${product.name} added to cart!`)
+      
+      // Reset success state after 2 seconds
+      setTimeout(() => setJustAdded(false), 2000)
+      
+    } catch (error) {
+      console.error('Failed to add to cart:', error)
+      toast.error('Failed to add item to cart')
+    } finally {
+      setIsAdding(false)
+    }
+  }
+
+  // Default cart implementation - replace with your actual cart logic
+  const addToCart = async (product: Product) => {
+    // Simulate API call
+    await new Promise(resolve => setTimeout(resolve, 500))
+    
+    // Get existing cart from localStorage or context
+    const existingCart = JSON.parse(localStorage.getItem('cart') || '[]')
+    
+    // Check if item already exists
+    const existingItem = existingCart.find((item: any) => item._id === product._id)
+    
+    if (existingItem) {
+      // Increase quantity
+      existingItem.quantity += 1
+    } else {
+      // Add new item
+      existingCart.push({
+        ...product,
+        quantity: 1
+      })
+    }
+    
+    // Save to localStorage
+    localStorage.setItem('cart', JSON.stringify(existingCart))
+    
+    // Dispatch custom event to update cart count in other components
+    window.dispatchEvent(new CustomEvent('cartUpdated', { detail: existingCart }))
+  }
 
   return (
     <Card 
@@ -55,12 +119,15 @@ export default function ProductCard({ product, viewMode = "grid" }: ProductCardP
               className={`h-9 w-9 bg-white/90 backdrop-blur-sm hover:bg-white shadow-lg transition-all duration-200 ${
                 isWishlisted ? "text-red-500" : "text-gray-600"
               }`}
-              onClick={() => setIsWishlisted(!isWishlisted)}
+              onClick={(e) => {
+                e.preventDefault()
+                e.stopPropagation()
+                setIsWishlisted(!isWishlisted)
+              }}
             >
               <Heart className={`h-4 w-4 ${isWishlisted ? "fill-current" : ""}`} />
             </Button>
-<Link href={`/product/${product._id}`}>
-
+            <Link href={`/product/${product._id}`}>
               <Button
                 size="icon"
                 variant="secondary"
@@ -78,9 +145,31 @@ export default function ProductCard({ product, viewMode = "grid" }: ProductCardP
 
           {/* Quick Add to Cart - Bottom Overlay */}
           <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/80 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0 z-20">
-            <Button className="w-full bg-white/90 backdrop-blur-sm text-gray-900 hover:bg-white transition-all duration-200">
-              <ShoppingCart className="h-4 w-4 mr-2" />
-              Quick Add
+            <Button 
+              className={`w-full transition-all duration-200 ${
+                justAdded 
+                  ? "bg-green-500 hover:bg-green-600 text-white" 
+                  : "bg-white/90 backdrop-blur-sm text-gray-900 hover:bg-white"
+              }`}
+              onClick={handleAddToCart}
+              disabled={isAdding}
+            >
+              {isAdding ? (
+                <div className="flex items-center">
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-current mr-2" />
+                  Adding...
+                </div>
+              ) : justAdded ? (
+                <div className="flex items-center">
+                  <Check className="h-4 w-4 mr-2" />
+                  Added!
+                </div>
+              ) : (
+                <div className="flex items-center">
+                  <ShoppingCart className="h-4 w-4 mr-2" />
+                  Quick Add
+                </div>
+              )}
             </Button>
           </div>
         </div>
@@ -90,7 +179,6 @@ export default function ProductCard({ product, viewMode = "grid" }: ProductCardP
             <div className="flex items-start justify-between mb-3">
               <div className="flex-1">
                 <Link href={`/product/${product._id}`}>
-
                   <h3 className="font-bold text-lg line-clamp-1 group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:from-blue-600 group-hover:to-purple-600 group-hover:bg-clip-text transition-all duration-200 cursor-pointer">
                     {product.name}
                   </h3>
@@ -133,17 +221,30 @@ export default function ProductCard({ product, viewMode = "grid" }: ProductCardP
             </div>
             <div className="flex gap-2">
               <Link href={`/product/${product._id}`}>
-
                 <Button variant="outline" size="sm" className="bg-white/50 backdrop-blur-sm border-gray-200 hover:bg-white/80">
                   View
                 </Button>
               </Link>
               <Button 
                 size="sm" 
-                className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white transition-all duration-200"
+                className={`transition-all duration-200 ${
+                  justAdded 
+                    ? "bg-green-500 hover:bg-green-600 text-white" 
+                    : "bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white"
+                }`}
+                onClick={handleAddToCart}
+                disabled={isAdding}
               >
-                <ShoppingCart className="h-4 w-4 mr-1" />
-                Add
+                {isAdding ? (
+                  <div className="flex items-center">
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-1" />
+                  </div>
+                ) : justAdded ? (
+                  <Check className="h-4 w-4 mr-1" />
+                ) : (
+                  <ShoppingCart className="h-4 w-4 mr-1" />
+                )}
+                {isAdding ? "" : justAdded ? "Added" : "Add"}
               </Button>
             </div>
           </div>
