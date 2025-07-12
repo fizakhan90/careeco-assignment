@@ -1,27 +1,27 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import Link from "next/link"
-import { ShoppingCart, User, LogOut, Menu, X } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
+import { useState } from "react";
+import Link from "next/link";
+import { ShoppingCart, User, LogOut, Menu, X } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import CartSheet from "@/components/cart-sheet"
-import { useAuth } from "@/context/AuthContext"
-import { useCart } from "@/lib/cart-context"
+} from "@/components/ui/dropdown-menu";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import CartSheet from "@/components/cart-sheet";
+import { useAuth } from "@/context/AuthContext";
+import { useCart } from "@/lib/cart-context";
 
 export default function Navbar() {
-  const { user, logout } = useAuth()
-  const { state: cartState } = useCart()
-  const isLoggedIn = !!user
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const { user, logout } = useAuth();
+  const { state: cartState } = useCart();
+  const isLoggedIn = !!user;
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
     <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-white/50 shadow-lg">
@@ -42,7 +42,9 @@ export default function Navbar() {
             {!isLoggedIn ? (
               <>
                 <Link href="/login">
-                  <Button variant="ghost" className="hover:bg-blue-50">Login</Button>
+                  <Button variant="ghost" className="hover:bg-blue-50">
+                    Login
+                  </Button>
                 </Link>
                 <Link href="/register">
                   <Button className="bg-gradient-to-r from-blue-500 to-purple-600 text-white hover:from-blue-600 hover:to-purple-700">
@@ -53,27 +55,42 @@ export default function Navbar() {
             ) : (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="h-10 w-10 rounded-full p-0">
+                  <Button
+                    variant="ghost"
+                    className="h-10 w-10 rounded-full p-0"
+                  >
                     <Avatar className="h-10 w-10 ring-2 ring-blue-500">
-                      <AvatarImage src={user.avatar || "/placeholder.svg"} alt={user.name} />
+                      <AvatarImage
+                        src={user.avatar || "/placeholder.svg"}
+                        alt={user.name}
+                      />
                       <AvatarFallback className="bg-gradient-to-r from-blue-500 to-purple-600 text-white">
-                        {user.name.split(' ').map(n => n[0]).join('')}
+                        {user.name
+                          .split(" ")
+                          .map((n) => n[0])
+                          .join("")}
                       </AvatarFallback>
                     </Avatar>
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-56 bg-white/95 backdrop-blur-md border-white/50" align="end">
+                <DropdownMenuContent
+                  className="w-56 bg-white/95 backdrop-blur-md border-white/50"
+                  align="end"
+                >
                   <div className="p-2">
                     <p className="font-medium">{user.name}</p>
-                    <p className="text-sm text-gray-500 truncate">{user.email}</p>
+                    <p className="text-sm text-gray-500 truncate">
+                      {user.email}
+                    </p>
                   </div>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem>
-                    <User className="mr-2 h-4 w-4" /> Profile
-                  </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    <ShoppingCart className="mr-2 h-4 w-4" /> Orders
-                  </DropdownMenuItem>
+                  <Link href="/orders/history" passHref legacyBehavior>
+                    <DropdownMenuItem asChild>
+                      <a className="flex items-center">
+                        <ShoppingCart className="mr-2 h-4 w-4" /> Orders
+                      </a>
+                    </DropdownMenuItem>
+                  </Link>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={logout}>
                     <LogOut className="mr-2 h-4 w-4" /> Logout
@@ -96,8 +113,16 @@ export default function Navbar() {
           </div>
 
           {/* Mobile Menu Button */}
-          <Button variant="ghost" className="md:hidden" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
-            {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+          <Button
+            variant="ghost"
+            className="md:hidden"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          >
+            {mobileMenuOpen ? (
+              <X className="h-6 w-6" />
+            ) : (
+              <Menu className="h-6 w-6" />
+            )}
           </Button>
         </div>
 
@@ -108,9 +133,14 @@ export default function Navbar() {
               {!isLoggedIn ? (
                 <>
                   <Link href="/login" onClick={() => setMobileMenuOpen(false)}>
-                    <Button variant="ghost" className="w-full justify-start">Login</Button>
+                    <Button variant="ghost" className="w-full justify-start">
+                      Login
+                    </Button>
                   </Link>
-                  <Link href="/register" onClick={() => setMobileMenuOpen(false)}>
+                  <Link
+                    href="/register"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
                     <Button className="w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white hover:from-blue-600 hover:to-purple-700">
                       Register
                     </Button>
@@ -120,9 +150,15 @@ export default function Navbar() {
                 <>
                   <div className="flex items-center space-x-3 px-3 py-2">
                     <Avatar className="h-8 w-8">
-                      <AvatarImage src={user.avatar || "/placeholder.svg"} alt={user.name} />
+                      <AvatarImage
+                        src={user.avatar || "/placeholder.svg"}
+                        alt={user.name}
+                      />
                       <AvatarFallback className="bg-gradient-to-r from-blue-500 to-purple-600 text-white text-sm">
-                        {user.name.split(' ').map(n => n[0]).join('')}
+                        {user.name
+                          .split(" ")
+                          .map((n) => n[0])
+                          .join("")}
                       </AvatarFallback>
                     </Avatar>
                     <div>
@@ -130,7 +166,11 @@ export default function Navbar() {
                       <p className="text-xs text-gray-500">{user.email}</p>
                     </div>
                   </div>
-                  <Button variant="ghost" className="w-full justify-start" onClick={logout}>
+                  <Button
+                    variant="ghost"
+                    className="w-full justify-start"
+                    onClick={logout}
+                  >
                     <LogOut className="mr-2 h-4 w-4" /> Logout
                   </Button>
                 </>
@@ -145,5 +185,5 @@ export default function Navbar() {
         )}
       </div>
     </nav>
-  )
+  );
 }
