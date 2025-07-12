@@ -71,7 +71,7 @@ export default function CartSheet({ children }: { children: React.ReactNode }) {
                         </div>
                         <div className="flex items-center gap-2">
                           <span className="font-semibold text-sm">${(item.price * item.quantity).toFixed(2)}</span>
-                          <Button variant="ghost" size="icon" className="text-red-500" onClick={() => removeFromCart(item._id)}>
+                          <Button variant="ghost" size="icon" className="text-red-500" onClick={() => removeFromCart(item.cartItemId)}>
                             <X className="h-3 w-3" />
                           </Button>
                         </div>

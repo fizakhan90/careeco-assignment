@@ -12,6 +12,7 @@ import api from "./api"
 
 interface CartItem {
   _id: string
+  cartItemId: string 
   name: string
   brand: string
   price: number
@@ -74,7 +75,7 @@ const cartReducer = (state: CartState, action: CartAction): CartState => {
     }
 
     case "REMOVE_ITEM": {
-      const newItems = state.items.filter((item) => item._id !== action.payload)
+      const newItems = state.items.filter((item) => item.cartItemId !== action.payload)
       const total = newItems.reduce((sum, item) => sum + item.price * item.quantity, 0)
       const itemCount = newItems.reduce((sum, item) => sum + item.quantity, 0)
 
@@ -162,6 +163,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         const product = item.product
         return {
           _id: product._id,
+          cartItemId: item._id, 
           name: product.name,
           brand: product.brand,
           price: product.price,
@@ -199,25 +201,36 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     }
   }, [state.items, user])
 
-  const addToCart = async (item: Omit<CartItem, "quantity">) => {
-    const newItem = { ...item, quantity: 1 }
-    dispatch({ type: "ADD_ITEM", payload: newItem })
+  const addToCart = async (item: Omit<CartItem, "quantity" | "cartItemId">) => {
+  if (user) {
+    try {
+      const response = await addToServerCart(item._id, 1, item.selectedSize)
+      const newCartItem = response.items?.[response.items.length - 1]
 
-    if (user) {
-      try {
-        await addToServerCart(item._id, 1, item.selectedSize)
-      } catch (err) {
-        console.error("Failed to sync addToCart with server:", err)
+      const newItem = {
+        ...item,
+        quantity: 1,
+        cartItemId: newCartItem._id, // Use the new DB _id
       }
-    }
-  }
 
-  const removeFromCart = async (id: string) => {
-    dispatch({ type: "REMOVE_ITEM", payload: id })
+      dispatch({ type: "ADD_ITEM", payload: newItem })
+    } catch (err) {
+      console.error("Failed to sync addToCart with server:", err)
+    }
+  } else {
+    // For guests
+    const newItem = { ...item, quantity: 1, cartItemId: "" }
+    dispatch({ type: "ADD_ITEM", payload: newItem })
+  }
+}
+
+
+  const removeFromCart = async (cartItemid: string) => {
+    dispatch({ type: "REMOVE_ITEM", payload: cartItemid })
 
     if (user) {
       try {
-        await removeFromServerCart(id)
+        await removeFromServerCart(cartItemid)
       } catch (err) {
         console.error("Failed to remove from server cart:", err)
       }
