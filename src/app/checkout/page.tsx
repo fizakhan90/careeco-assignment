@@ -94,7 +94,7 @@ export default function CheckoutPage() {
     }
 
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/orders`, {
+      const response = await fetch(`http://localhost:5000/api/orders`, {
         method: 'POST',
         headers: headers,
         body: JSON.stringify(orderPayload),

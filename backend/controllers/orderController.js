@@ -21,6 +21,8 @@ const placeOrder = asyncHandler(async (req, res) => {
     totalPrice,
     paymentMethod,
     status: 'Processing',
+    isPaid: true,               // ✅ Mark as paid
+    paidAt: Date.now() 
   });
 
   // Save the order to the database
