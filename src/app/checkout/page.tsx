@@ -83,8 +83,9 @@ export default function CheckoutPage() {
         product: item._id, name: item.name, quantity: item.quantity,
         size: item.selectedSize, price: item.price,
       })),
-      totalPrice: cartState.total,
+      totalPrice: cartState.finalTotal, 
       paymentMethod: "Placeholder",
+      couponApplied: state.couponCode,
     };
 
     const headers: HeadersInit = { 'Content-Type': 'application/json' };

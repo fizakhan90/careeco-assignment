@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { ShoppingCart, Minus, Plus, X, CreditCard } from "lucide-react"
@@ -10,11 +10,23 @@ import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTr
 import { Separator } from "@/components/ui/separator"
 import { useCart } from "@/lib/cart-context"
 import { useAuth } from "@/context/AuthContext"
+import { Label } from "@radix-ui/react-dropdown-menu"
+import { Input } from "./ui/input"
+import { toast } from "sonner"
 
 export default function CartSheet({ children }: { children: React.ReactNode }) {
-  const { state, removeFromCart, updateQuantity } = useCart()
+  const { state, removeFromCart, updateQuantity, applyCoupon, removeCoupon } = useCart()
   const { user } = useAuth()
   const [isOpen, setIsOpen] = useState(false)
+  const [couponInput, setCouponInput] = useState("");
+  const [isApplying, setIsApplying] = useState(false);
+
+  const handleApplyCoupon = async () => {
+    if (!couponInput.trim()) return;
+    setIsApplying(true);
+    await applyCoupon(couponInput);
+    setIsApplying(false);
+  };
 
   const handleCheckout = () => {
     setIsOpen(false)
@@ -25,10 +37,65 @@ export default function CartSheet({ children }: { children: React.ReactNode }) {
     }
   }
 
+  useEffect(() => {
+    if (state.couponError) {
+      toast.error("Coupon Error", { description: state.couponError });
+    }
+  }, [state.couponError]);
+
   return (
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
       <SheetTrigger asChild>{children}</SheetTrigger>
       <SheetContent className="w-full sm:max-w-lg bg-white/95 backdrop-blur-md">
+      <div className="p-4 mt-auto border-t">
+        {/* --- COUPON SECTION (Only for logged-in users) --- */}
+        {user && (
+          <>
+            <div className="space-y-2">
+              <Label htmlFor="coupon">Discount Code</Label>
+              {state.couponCode ? (
+                <div className="flex items-center justify-between p-2 bg-green-50 text-green-700 rounded-md">
+                  <span className="font-semibold">Code "{state.couponCode}" applied!</span>
+                  <Button variant="ghost" size="icon" className="h-6 w-6" onClick={removeCoupon}>
+                    <X className="h-4 w-4" />
+                  </Button>
+                </div>
+              ) : (
+                <div className="flex gap-2">
+                  <Input id="coupon" value={couponInput} onChange={(e) => setCouponInput(e.target.value)} />
+                  <Button onClick={handleApplyCoupon} disabled={isApplying}>
+                    {isApplying ? "Applying..." : "Apply"}
+                  </Button>
+                </div>
+              )}
+            </div>
+            <Separator className="my-4" />
+          </>
+        )}
+        
+        {/* --- TOTALS SECTION --- */}
+        <div className="space-y-2 text-sm">
+          <div className="flex justify-between">
+            <span>Subtotal</span>
+            <span>₹{state.total.toFixed(2)}</span>
+          </div>
+          {state.discount > 0 && (
+            <div className="flex justify-between text-green-600 font-medium">
+              <span>Discount</span>
+              <span>- ₹{state.discount.toFixed(2)}</span>
+            </div>
+          )}
+        </div>
+        <Separator className="my-4" />
+        <div className="flex justify-between font-bold text-lg">
+          <span>Total</span>
+          <span>₹{state.finalTotal.toFixed(2)}</span>
+        </div>
+        
+        <Link href="/checkout">
+          <Button className="w-full mt-4">Proceed to Checkout</Button>
+        </Link>
+      </div>
         <SheetHeader>
           <SheetTitle className="flex items-center gap-2">
             <ShoppingCart className="h-5 w-5" />
