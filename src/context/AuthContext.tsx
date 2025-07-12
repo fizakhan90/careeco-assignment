@@ -45,31 +45,79 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   }, []);
 
+  // const login = async (email: string, password: string): Promise<boolean> => {
+  //   // ... your login function remains the same
+  //   try {
+  //     const res = await fetch("http://localhost:5000/api/users/login", { /* ... */ });
+  //     if (!res.ok) return false;
+  //     const data = await res.json();
+  //     localStorage.setItem("token", data.token);
+  //     localStorage.setItem("user", JSON.stringify(data));
+  //     setUser(data);
+  //     return true;
+  //   } catch (err) { return false; }
+  // };
   const login = async (email: string, password: string): Promise<boolean> => {
-    // ... your login function remains the same
-    try {
-      const res = await fetch("http://localhost:5000/api/users/login", { /* ... */ });
-      if (!res.ok) return false;
-      const data = await res.json();
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("user", JSON.stringify(data));
-      setUser(data);
-      return true;
-    } catch (err) { return false; }
-  };
+  try {
+    const res = await fetch("http://localhost:5000/api/users/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include", // optional, if your backend uses cookies
+      body: JSON.stringify({ email, password }),
+    });
 
+    if (!res.ok) return false;
+
+    const data = await res.json();
+    localStorage.setItem("token", data.token);
+    localStorage.setItem("user", JSON.stringify(data));
+    setUser(data);
+    return true;
+  } catch (err) {
+    console.error("Login error:", err);
+    return false;
+  }
+};
+
+
+  // const register = async (name: string, email: string, password: string): Promise<boolean> => {
+  //   // ... your register function remains the same
+  //   try {
+  //     const res = await fetch("http://localhost:5000/api/users/register", { /* ... */ });
+  //     if (!res.ok) return false;
+  //     const data = await res.json();
+  //     localStorage.setItem("token", data.token);
+  //     localStorage.setItem("user", JSON.stringify(data));
+  //     setUser(data);
+  //     return true;
+  //   } catch (err) { return false; }
+  // };
   const register = async (name: string, email: string, password: string): Promise<boolean> => {
-    // ... your register function remains the same
-    try {
-      const res = await fetch("http://localhost:5000/api/users/register", { /* ... */ });
-      if (!res.ok) return false;
-      const data = await res.json();
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("user", JSON.stringify(data));
-      setUser(data);
-      return true;
-    } catch (err) { return false; }
-  };
+  try {
+    const res = await fetch("http://localhost:5000/api/users/register", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+      body: JSON.stringify({ name, email, password }),
+    });
+
+    if (!res.ok) return false;
+
+    const data = await res.json();
+    localStorage.setItem("token", data.token);
+    localStorage.setItem("user", JSON.stringify(data));
+    setUser(data);
+    return true;
+  } catch (err) {
+    console.error("Register error:", err);
+    return false;
+  }
+};
+
 
   const logout = () => {
     localStorage.removeItem("token");
