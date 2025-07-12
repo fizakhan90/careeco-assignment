@@ -4,19 +4,29 @@ import Order from '../models/Order.js';
 // @desc    Place new order
 // @route   POST /api/orders
 const placeOrder = asyncHandler(async (req, res) => {
-  const { shippingAddress, orderItems, totalPrice, paymentMethod, guest = false } = req.body;
+  // We get all the data from the frontend request body
+  const { shippingAddress, orderItems, totalPrice, paymentMethod } = req.body;
 
+  // Determine if this is a guest checkout.
+  // req.user is added by your 'protect' middleware. If it doesn't exist, it's a guest.
+  const isGuest = !req.user;
+
+  // Create a new order instance based on your schema
   const order = new Order({
-    user: guest ? null : req.user._id,
+    // If it's a guest, user is null. If logged in, use their ID.
+    user: isGuest ? null : req.user._id, 
+    guest: isGuest,
     orderItems,
     shippingAddress,
     totalPrice,
     paymentMethod,
-    guest,
     status: 'Processing',
   });
 
+  // Save the order to the database
   const createdOrder = await order.save();
+  
+  // Send a success response back to the frontend
   res.status(201).json(createdOrder);
 });
 
