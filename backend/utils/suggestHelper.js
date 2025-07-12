@@ -1,16 +1,16 @@
-import Product from '../models/Product.js';
+import Product from "../models/Product.js";
 
 const suggestAlternatives = async (query) => {
   // Find popular or related products as fallback suggestions
   const fallbackProducts = await Product.find({
     $or: [
-      { category: { $regex: query, $options: 'i' } },
-      { brand: { $regex: query, $options: 'i' } },
-      { description: { $regex: query, $options: 'i' } }
-    ]
+      { category: { $regex: query, $options: "i" } },
+      { brand: { $regex: query, $options: "i" } },
+      { description: { $regex: query, $options: "i" } },
+    ],
   })
     .limit(10)
-    .select('name brand category');
+    .select("name price brand category");
 
   if (fallbackProducts.length > 0) {
     return fallbackProducts;
@@ -20,7 +20,7 @@ const suggestAlternatives = async (query) => {
   return await Product.find({})
     .sort({ rating: -1 })
     .limit(10)
-    .select('name brand category');
+    .select("name price brand category");
 };
 
 export default suggestAlternatives;
