@@ -17,9 +17,14 @@ dotenv.config();
 connectDB();
 
 const app = express();
+const allowedOrigins = [
+  "http://localhost:3000",               
+  "https://careeco-assignment.vercel.app/"      
+];
+
 app.use(cors({
-  origin: 'http://localhost:3000', // frontend URL
-  credentials: true,               // allow cookies/headers with requests
+  origin: allowedOrigins,
+  credentials: true, 
 }));
 app.use(express.json());
 
