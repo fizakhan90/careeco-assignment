@@ -147,7 +147,7 @@ export default function CartSheet({ children }: { children: React.ReactNode }) {
                 <Link href="/checkout" className="block" onClick={() => setIsOpen(false)}>
                   <Button className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-semibold py-4 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200">
                     <CreditCard className="h-5 w-5 mr-2" />
-                    {user ? "Proceed to Checkout" : "Login to Checkout"}
+                    {user ? "Proceed to Checkout" : "Checkout as guest"}
                   </Button>
                 </Link>
                 <Button variant="outline" onClick={() => setIsOpen(false)} className="w-full border-gray-300 hover:bg-gray-50 font-medium py-3 rounded-xl">
