@@ -38,7 +38,6 @@ export default function TrackOrderPage({ params }: { params: { id: string } }) {
               <div className="text-center">
                 <Search className="w-16 h-16 mx-auto mb-4 opacity-80" />
                 <CardTitle className="text-2xl mb-2">Order Tracking</CardTitle>
-                <p className="text-blue-100">Enter your order details to track your package</p>
               </div>
             </div>
           </CardHeader>

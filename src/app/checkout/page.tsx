@@ -176,43 +176,43 @@ export default function CheckoutPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-100">
       <Navbar />
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 py-8 max-w-7xl">
         {/* Header */}
-        <div className="mb-8">
+        <div className="mb-6">
           <Link
             href="/cart"
-            className="inline-flex items-center gap-2 text-gray-600 hover:text-blue-600 transition-colors mb-4"
+            className="inline-flex items-center gap-2 text-gray-600 hover:text-blue-600 transition-colors mb-3"
           >
             <ArrowLeft className="h-4 w-4" />
             Back to Cart
           </Link>
-          <h1 className="text-3xl font-bold text-gray-900">Checkout</h1>
-          <p className="text-gray-600 mt-2">Complete your purchase securely</p>
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Checkout</h1>
+          <p className="text-gray-600 mt-1">Complete your purchase securely</p>
         </div>
 
         {/* Security Banner */}
-        <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-8">
+        <div className="bg-green-50 border border-green-200 rounded-lg p-3 mb-6">
           <div className="flex items-center gap-3">
-            <Shield className="h-5 w-5 text-green-600" />
+            <Shield className="h-5 w-5 text-green-600 flex-shrink-0" />
             <span className="text-green-800 font-medium">Secure Checkout</span>
-            <span className="text-green-600">•</span>
-            <span className="text-green-700 text-sm">Your information is protected with 256-bit SSL encryption</span>
+            <span className="text-green-600 hidden sm:inline">•</span>
+            <span className="text-green-700 text-sm hidden sm:inline">Your information is protected with 256-bit SSL encryption</span>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
           {/* Left Side: Checkout Form */}
           <div className="lg:col-span-2">
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* Shipping Information */}
-              <Card className="shadow-lg border-0 bg-white/80 backdrop-blur-sm">
-                <CardHeader className="bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-t-lg">
-                  <CardTitle className="flex items-center gap-2">
+              <Card className="shadow-md border-0 bg-white">
+                <CardHeader className="bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-t-lg py-4">
+                  <CardTitle className="flex items-center gap-2 text-lg">
                     <Truck className="h-5 w-5" />
                     1. Shipping Information
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="p-6 space-y-6">
+                <CardContent className="p-6 space-y-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <Label htmlFor="fullName" className="text-sm font-medium text-gray-700">
@@ -321,9 +321,9 @@ export default function CheckoutPage() {
               </Card>
 
               {/* Payment Method */}
-              <Card className="shadow-lg border-0 bg-white/80 backdrop-blur-sm">
-                <CardHeader className="bg-gradient-to-r from-green-600 to-green-700 text-white rounded-t-lg">
-                  <CardTitle className="flex items-center gap-2">
+              <Card className="shadow-md border-0 bg-white">
+                <CardHeader className="bg-gradient-to-r from-green-600 to-green-700 text-white rounded-t-lg py-4">
+                  <CardTitle className="flex items-center gap-2 text-lg">
                     <CreditCard className="h-5 w-5" />
                     2. Payment Method
                   </CardTitle>
@@ -332,9 +332,9 @@ export default function CheckoutPage() {
                   <RadioGroup
                     value={selectedPaymentMethod}
                     onValueChange={setSelectedPaymentMethod}
-                    className="space-y-4"
+                    className="space-y-3"
                   >
-                    <div className="flex items-center space-x-3 p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+                    <div className="flex items-center space-x-3 p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
                       <RadioGroupItem value="card" id="card" />
                       <div className="flex items-center space-x-3 flex-1">
                         <CreditCard className="h-5 w-5 text-blue-600" />
@@ -345,7 +345,7 @@ export default function CheckoutPage() {
                       </div>
                     </div>
                     
-                    <div className="flex items-center space-x-3 p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+                    <div className="flex items-center space-x-3 p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
                       <RadioGroupItem value="upi" id="upi" />
                       <div className="flex items-center space-x-3 flex-1">
                         <Wallet className="h-5 w-5 text-purple-600" />
@@ -356,7 +356,7 @@ export default function CheckoutPage() {
                       </div>
                     </div>
                     
-                    <div className="flex items-center space-x-3 p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+                    <div className="flex items-center space-x-3 p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
                       <RadioGroupItem value="netbanking" id="netbanking" />
                       <div className="flex items-center space-x-3 flex-1">
                         <Building className="h-5 w-5 text-indigo-600" />
@@ -367,7 +367,7 @@ export default function CheckoutPage() {
                       </div>
                     </div>
                     
-                    <div className="flex items-center space-x-3 p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+                    <div className="flex items-center space-x-3 p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
                       <RadioGroupItem value="wallet" id="wallet" />
                       <div className="flex items-center space-x-3 flex-1">
                         <Wallet className="h-5 w-5 text-orange-600" />
@@ -378,7 +378,7 @@ export default function CheckoutPage() {
                       </div>
                     </div>
                     
-                    <div className="flex items-center space-x-3 p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+                    <div className="flex items-center space-x-3 p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
                       <RadioGroupItem value="cod" id="cod" />
                       <div className="flex items-center space-x-3 flex-1">
                         <Truck className="h-5 w-5 text-green-600" />
@@ -390,7 +390,7 @@ export default function CheckoutPage() {
                     </div>
                   </RadioGroup>
                   
-                  <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                  <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
                     <div className="flex items-center gap-2 text-blue-800">
                       <Lock className="h-4 w-4" />
                       <span className="font-medium text-sm">Payment Security</span>
@@ -405,7 +405,7 @@ export default function CheckoutPage() {
               {/* Submit Button */}
               <Button
                 type="submit"
-                className="w-full h-14 text-lg font-semibold bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white shadow-lg transition-all duration-200 transform hover:scale-[1.02]"
+                className="w-full h-12 text-base font-semibold bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white shadow-lg transition-all duration-200 hover:shadow-xl disabled:opacity-50"
                 disabled={isProcessing}
               >
                 {isProcessing ? (
@@ -425,72 +425,72 @@ export default function CheckoutPage() {
 
           {/* Right Side: Order Summary */}
           <div className="lg:col-span-1">
-            <Card className="sticky top-8 shadow-lg border-0 bg-white/80 backdrop-blur-sm">
-              <CardHeader className="bg-gradient-to-r from-gray-800 to-gray-900 text-white rounded-t-lg">
-                <CardTitle className="flex items-center gap-2">
+            <Card className="sticky top-8 shadow-md border-0 bg-white">
+              <CardHeader className="bg-gradient-to-r from-gray-800 to-gray-900 text-white rounded-t-lg py-4">
+                <CardTitle className="flex items-center gap-2 text-lg">
                   <CheckCircle className="h-5 w-5" />
                   Order Summary
                 </CardTitle>
               </CardHeader>
               <CardContent className="p-6">
-                <div className="space-y-4 max-h-72 overflow-y-auto">
+                <div className="space-y-3 max-h-64 overflow-y-auto">
                   {cartState.items.map((item) => (
                     <div
                       key={item.cartItemId || item._id}
-                      className="flex gap-4 items-center p-3 bg-gray-50 rounded-lg"
+                      className="flex gap-3 items-center p-3 bg-gray-50 rounded-lg"
                     >
                       <div className="relative">
                         <Image
                           src={item.image || "/placeholder.svg"}
                           alt={item.name}
-                          width={60}
-                          height={60}
+                          width={50}
+                          height={50}
                           className="rounded-md border object-cover"
                         />
                         <div className="absolute -top-2 -right-2 bg-blue-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
                           {item.quantity}
                         </div>
                       </div>
-                      <div className="flex-1">
-                        <p className="font-medium text-gray-900 leading-tight">{item.name}</p>
-                        <p className="text-sm text-gray-500">
+                      <div className="flex-1 min-w-0">
+                        <p className="font-medium text-gray-900 text-sm leading-tight truncate">{item.name}</p>
+                        <p className="text-xs text-gray-500">
                           Size: {item.selectedSize || 'N/A'}
                         </p>
                       </div>
-                      <p className="font-semibold text-gray-900">
+                      <p className="font-semibold text-gray-900 text-sm">
                         ₹{(item.price * item.quantity).toFixed(2)}
                       </p>
                     </div>
                   ))}
                 </div>
 
-                <Separator className="my-6" />
+                <Separator className="my-4" />
 
-                <div className="space-y-3">
-                  <div className="flex justify-between text-gray-600">
+                <div className="space-y-2">
+                  <div className="flex justify-between text-gray-600 text-sm">
                     <span>Subtotal</span>
                     <span>₹{cartState.finalTotal.toFixed(2)}</span>
                   </div>
-                  <div className="flex justify-between text-gray-600">
+                  <div className="flex justify-between text-gray-600 text-sm">
                     <span>Shipping</span>
                     <span className="font-medium text-green-600">Free</span>
                   </div>
                   {cartState.couponCode && (
-                    <div className="flex justify-between text-green-600">
+                    <div className="flex justify-between text-green-600 text-sm">
                       <span>Discount ({cartState.couponCode})</span>
                       <span>Applied</span>
                     </div>
                   )}
                 </div>
 
-                <Separator className="my-6" />
+                <Separator className="my-4" />
 
-                <div className="flex justify-between font-bold text-xl text-gray-900">
+                <div className="flex justify-between font-bold text-lg text-gray-900">
                   <span>Total</span>
                   <span>₹{cartState.finalTotal.toFixed(2)}</span>
                 </div>
 
-                <div className="mt-6 p-4 bg-green-50 border border-green-200 rounded-lg">
+                <div className="mt-4 p-3 bg-green-50 border border-green-200 rounded-lg">
                   <div className="flex items-center gap-2 text-green-800">
                     <Truck className="h-4 w-4" />
                     <span className="font-medium text-sm">Free Shipping</span>

@@ -334,12 +334,14 @@ export default function OrderHistoryPage() {
                         </div>
                         
                         <div className="flex gap-2 w-full sm:w-auto">
-                          <Link href={`/orders/track/${order._id}`} className="flex-1 sm:flex-none">
-                            <Button variant="outline" className="w-full sm:w-auto">
-                              <Eye className="mr-2 h-4 w-4" />
-                              Track Order
-                            </Button>
-                          </Link>
+                          {order.status !== 'Cancelled' && (
+  <Link href={`/orders/track/${order._id}`} className="flex-1 sm:flex-none">
+  <Button variant="outline" className="w-full sm:w-auto">
+    <Eye className="mr-2 h-4 w-4" />
+    Track Order
+  </Button>
+  </Link>
+)}
                           {order.status === 'Processing' && (
                             <Button
                               variant="destructive"
