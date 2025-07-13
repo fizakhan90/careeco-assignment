@@ -51,13 +51,10 @@ export default function CheckoutPage() {
 
   // This effect runs to pre-fill data once authentication state is resolved
   useEffect(() => {
-    // Only run this logic once authentication is no longer loading
     if (!authLoading) {
       if (user) {
-        // If user is logged in, pre-fill their name
         setShippingAddress((prev) => ({ ...prev, fullName: user.name || "" }));
       } else {
-        // If user is a GUEST, load from localStorage
         const savedGuestInfo = localStorage.getItem("guestShippingInfo");
         if (savedGuestInfo) {
           setShippingAddress(JSON.parse(savedGuestInfo));
@@ -66,17 +63,14 @@ export default function CheckoutPage() {
     }
   }, [user, authLoading]);
 
-  // This function updates the form state and saves guest progress
   const handleInputChange = (field: keyof ShippingAddress, value: string) => {
     const updatedAddress = { ...shippingAddress, [field]: value };
     setShippingAddress(updatedAddress);
-    // We check for a guest by seeing if the user object is null
     if (!user) {
       localStorage.setItem("guestShippingInfo", JSON.stringify(updatedAddress));
     }
   };
 
-  // This function handles the final submission to your Express backend
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsProcessing(true);
@@ -90,9 +84,9 @@ export default function CheckoutPage() {
         size: item.selectedSize,
         price: item.price,
       })),
-      totalPrice: cartState.finalTotal, // ✅ Correct discounted total
+      totalPrice: cartState.finalTotal, 
       paymentMethod: selectedPaymentMethod,
-      couponApplied: cartState.couponCode || null, // ✅ Correctly pass applied coupon
+      couponApplied: cartState.couponCode || null, 
     };
 
     const headers: HeadersInit = { "Content-Type": "application/json" };
@@ -134,8 +128,7 @@ export default function CheckoutPage() {
     }
   };
 
-  // --- THE ROBUST LOADING STATE GUARD ---
-  // This waits for BOTH authentication and the cart to finish loading.
+
   if (authLoading || cartLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
@@ -147,8 +140,7 @@ export default function CheckoutPage() {
     );
   }
 
-  // --- THE CART EMPTY GUARD ---
-  // This now runs only after we are sure the cart has finished loading.
+  
   if (cartState.items.length === 0 && !isProcessing) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">

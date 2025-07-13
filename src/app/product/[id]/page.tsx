@@ -175,7 +175,7 @@ export default function ProductDetailPage() {
             </Card>
           </div>
 
-          {/* Right: Product Info */}
+          {/* Product Info */}
           <div className="space-y-6">
             <div className="space-y-3">
               <Badge className="w-fit bg-gradient-to-r from-blue-500 to-purple-500 text-white px-3 py-1 text-sm font-medium">
@@ -185,7 +185,7 @@ export default function ProductDetailPage() {
               <h1 className="text-4xl font-bold text-gray-900 leading-tight">{product.name}</h1>
               <p className="text-xl text-gray-600 font-medium">{product.brand}</p>
 
-              {/* ⭐ Rating */}
+              {/* Rating */}
               <div className="flex items-center gap-3">
                 <div className="flex">
                   {[...Array(5)].map((_, i) => (
@@ -202,7 +202,7 @@ export default function ProductDetailPage() {
                 </span>
               </div>
 
-              {/* 💰 Price */}
+              {/* Price */}
               <div className="text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600 py-2">
                 ₹{product.price.toLocaleString()}
               </div>
@@ -239,7 +239,7 @@ export default function ProductDetailPage() {
               </div>
             )}
 
-            {/* 🔢 Quantity */}
+            {/* Quantity */}
             <div className="space-y-3">
               <h3 className="font-semibold text-gray-800 text-lg">Quantity</h3>
               <div className="flex items-center gap-4">
@@ -265,7 +265,7 @@ export default function ProductDetailPage() {
               </div>
             </div>
 
-            {/* 🛒 Add to Cart */}
+            {/* Add to Cart */}
             <div className="space-y-4 pt-4">
               {isLoggedIn ? (
                 <Button
@@ -331,7 +331,7 @@ export default function ProductDetailPage() {
           </div>
         </div>
 
-        {/* 🚀 Better Deals Carousel */}
+        {/* Better Deals Carousel */}
         {betterDeals.length > 0 && (
           <div>
             <h2 className="text-3xl font-bold mb-8 text-gray-900">Similar Items & Better Deals</h2>

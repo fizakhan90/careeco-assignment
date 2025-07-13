@@ -10,7 +10,7 @@ import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTr
 import { Separator } from "@/components/ui/separator"
 import { useCart } from "@/context/CartContext"
 import { useAuth } from "@/context/AuthContext"
-import { Label } from "@/components/ui/label" // Corrected import
+import { Label } from "@/components/ui/label" 
 import { Input } from "./ui/input"
 import { toast } from "sonner"
 import router from "next/router"
@@ -26,13 +26,12 @@ export default function CartSheet({ children }: { children: React.ReactNode }) {
     if (!couponInput.trim()) return;
     setIsApplying(true);
     await applyCoupon(couponInput);
-    setCouponInput(""); // Clear input after applying
+    setCouponInput(""); 
     setIsApplying(false);
   };
 
   const handleCheckout = () => {
     setIsOpen(false);
-    // Redirect logic can be simplified by just navigating
     router.push(user ? "/checkout" : "/login");
   }
 
@@ -89,7 +88,6 @@ export default function CartSheet({ children }: { children: React.ReactNode }) {
                       {item.selectedSize && <Badge variant="outline" className="text-xs mb-3">Size: {item.selectedSize}</Badge>}
                       <div className="flex justify-between items-center">
                         <div className="flex items-center gap-1 bg-gray-100 rounded-lg p-1">
-                          {/* --- FIX #1: Use item.cartItemId for updating quantity --- */}
                           <Button size="icon" variant="ghost" className="h-8 w-8 rounded-md hover:bg-white" onClick={() => updateQuantity(item.cartItemId, item.quantity - 1)}>
                             <Minus className="h-3 w-3" />
                           </Button>
@@ -143,7 +141,6 @@ export default function CartSheet({ children }: { children: React.ReactNode }) {
 
               {/* Action Buttons */}
               <div className="space-y-3 pt-2">
-                {/* --- FIX #2: Wrapped Continue Shopping in a Link component --- */}
                 <Link href="/checkout" className="block" onClick={() => setIsOpen(false)}>
                   <Button className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-semibold py-4 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200">
                     <CreditCard className="h-5 w-5 mr-2" />

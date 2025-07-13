@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { ShoppingCart, Heart, Star, Eye, Check } from 'lucide-react'
 import { toast } from "sonner"
-import { useCart } from "@/context/CartContext" // <-- 1. IMPORT THE CART CONTEXT HOOK
+import { useCart } from "@/context/CartContext" 
 
 // Define the shape of the product
 interface Product {
@@ -23,13 +23,11 @@ interface Product {
   reviews?: number;
 }
 
-// The props interface remains the same
 interface ProductCardProps {
   product: Product
 }
 
 export default function ProductCard({ product }: ProductCardProps) {
-  // --- 2. GET THE addToCart FUNCTION FROM THE CONTEXT ---
   const { addToCart } = useCart();
 
   const [isWishlisted, setIsWishlisted] = useState(false)
@@ -46,8 +44,7 @@ export default function ProductCard({ product }: ProductCardProps) {
     setIsAdding(true)
     
     try {
-      // --- 3. USE THE addToCart FUNCTION FROM THE CONTEXT ---
-      // This is now the single source of truth for adding items.
+.
       await addToCart(product)
       
       setJustAdded(true)
@@ -63,8 +60,6 @@ export default function ProductCard({ product }: ProductCardProps) {
     }
   }
 
-  // --- 4. THE LOCAL addToCart FUNCTION HAS BEEN DELETED ---
-  // It is no longer needed because we use the one from the context.
 
   return (
     <Card 
@@ -114,7 +109,6 @@ export default function ProductCard({ product }: ProductCardProps) {
                 </Link>
                 <p className="text-sm text-gray-600 font-medium mb-2">{product.brand}</p>
                 
-                {/* --- THIS SECTION IS NOW RESTORED --- */}
                 {product.rating && (
                   <div className="flex items-center gap-1 mb-2">
                     <div className="flex">
@@ -130,7 +124,6 @@ export default function ProductCard({ product }: ProductCardProps) {
               </div>
             </div>
 
-            {/* --- THIS SECTION IS NOW RESTORED --- */}
             {product.description && (
               <p className="text-sm text-gray-600 mb-4 line-clamp-2">{product.description}</p>
             )}

@@ -1,9 +1,7 @@
-// src/app/order-success/page.tsx
-
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { CheckCircle2 } from 'lucide-react';
-import Navbar from '@/components/Navbar'; // Optional: if you want the navbar here
+import Navbar from '@/components/Navbar'; 
 
 export default function OrderSuccessPage() {
   return (

@@ -8,21 +8,19 @@ interface User {
   email: string;
 }
 
-// UPDATE: The context now provides the user, a loading state, and functions
 interface AuthContextType {
   user: User | null;
-  loading: boolean; // <-- ADD LOADING STATE
+  loading: boolean; 
   login: (email: string, password: string) => Promise<boolean>;
   register: (name: string, email: string, password: string) => Promise<boolean>;
   logout: () => void;
 }
 
-// We provide a default context value, but it will be overridden by the Provider.
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true); // <-- START IN A LOADING STATE
+  const [loading, setLoading] = useState(true); 
 
   useEffect(() => {
     try {
@@ -35,28 +33,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       }
     } catch (error) {
       console.error("Failed to parse user from localStorage:", error);
-      // Clear corrupted data
       localStorage.removeItem("token");
       localStorage.removeItem("user");
       setUser(null);
     } finally {
-      // IMPORTANT: Set loading to false AFTER we've checked localStorage
       setLoading(false); 
     }
   }, []);
 
-  // const login = async (email: string, password: string): Promise<boolean> => {
-  //   // ... your login function remains the same
-  //   try {
-  //     const res = await fetch("http://localhost:5000/api/users/login", { /* ... */ });
-  //     if (!res.ok) return false;
-  //     const data = await res.json();
-  //     localStorage.setItem("token", data.token);
-  //     localStorage.setItem("user", JSON.stringify(data));
-  //     setUser(data);
-  //     return true;
-  //   } catch (err) { return false; }
-  // };
+
   const login = async (email: string, password: string): Promise<boolean> => {
   try {
     const res = await fetch("http://localhost:5000/api/users/login", {
@@ -64,7 +49,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       headers: {
         "Content-Type": "application/json",
       },
-      credentials: "include", // optional, if your backend uses cookies
+      credentials: "include", 
       body: JSON.stringify({ email, password }),
     });
 
@@ -82,18 +67,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 };
 
 
-  // const register = async (name: string, email: string, password: string): Promise<boolean> => {
-  //   // ... your register function remains the same
-  //   try {
-  //     const res = await fetch("http://localhost:5000/api/users/register", { /* ... */ });
-  //     if (!res.ok) return false;
-  //     const data = await res.json();
-  //     localStorage.setItem("token", data.token);
-  //     localStorage.setItem("user", JSON.stringify(data));
-  //     setUser(data);
-  //     return true;
-  //   } catch (err) { return false; }
-  // };
   const register = async (name: string, email: string, password: string): Promise<boolean> => {
   try {
     const res = await fetch("http://localhost:5000/api/users/register", {
@@ -126,14 +99,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   return (
-    // Pass the new loading state in the value
     <AuthContext.Provider value={{ user, loading, login, register, logout }}>
       {children}
     </AuthContext.Provider>
   );
 };
 
-// Update the useAuth hook to handle the undefined case
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (context === undefined) {

@@ -14,10 +14,10 @@ import {
   addToServerCart,
   removeFromServerCart,
   clearServerCart,
-  applyCouponToServer, // <-- Import the new API function
+  applyCouponToServer, 
 } from "../lib/cartApi";
 
-// --- 1. TYPES: UPGRADED ---
+
 interface CartItem {
   _id: string;
   cartItemId: string;
@@ -30,18 +30,17 @@ interface CartItem {
   selectedSize?: string;
 }
 
-// Add coupon state to CartState
+
 interface CartState {
   items: CartItem[];
   itemCount: number;
-  total: number; // This is now the subtotal
+  total: number; 
   discount: number;
   couponCode: string | null;
-  finalTotal: number; // This is the new total after discount
+  finalTotal: number; 
   couponError: string | null;
 }
 
-// Add new actions for coupons
 type CartAction =
   | { type: "LOAD_CART"; payload: CartItem[] }
   | { type: "ADD_ITEM"; payload: CartItem }
@@ -58,7 +57,6 @@ type CartAction =
   | { type: "APPLY_COUPON_FAIL"; payload: { error: string } }
   | { type: "REMOVE_COUPON" };
 
-// Add new functions to the context type
 interface CartContextType {
   state: CartState;
   loading: boolean;
@@ -72,9 +70,7 @@ interface CartContextType {
 
 const CartContext = createContext<CartContextType | null>(null);
 
-// --- 2. REDUCER: UPGRADED ---
 const cartReducer = (state: CartState, action: CartAction): CartState => {
-  // Helper to recalculate totals
   const calculateTotals = (items: CartItem[]) => {
     const total = items.reduce(
       (sum, item) => sum + item.price * item.quantity,
@@ -101,7 +97,6 @@ const cartReducer = (state: CartState, action: CartAction): CartState => {
         : [...state.items, action.payload];
 
       const { total, itemCount } = calculateTotals(newItems);
-      // When items change, coupon is removed to prevent invalid discounts
       return {
         ...state,
         items: newItems,
@@ -161,7 +156,6 @@ const cartReducer = (state: CartState, action: CartAction): CartState => {
       };
     }
 
-    // --- NEW COUPON ACTIONS ---
     case "APPLY_COUPON_SUCCESS":
       return {
         ...state,
@@ -196,7 +190,6 @@ const cartReducer = (state: CartState, action: CartAction): CartState => {
   }
 };
 
-// --- 3. PROVIDER: UPGRADED ---
 export function CartProvider({ children }: { children: ReactNode }) {
   const [state, dispatch] = useReducer(cartReducer, {
     items: [],
@@ -210,13 +203,11 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
   const { user, loading: authLoading } = useAuth();
 
-  // Your existing useEffect for loading/merging carts
   useEffect(() => {
     const loadCart = async () => {
       setLoading(true);
       if (user) {
         try {
-          // You could add merge logic here if needed
           const serverCart = await getCartFromServer();
           const items = serverCart.items
             .filter((item: any) => item.product)
@@ -240,7 +231,6 @@ export function CartProvider({ children }: { children: ReactNode }) {
           dispatch({ type: "LOAD_CART", payload: JSON.parse(savedCart) });
         }
       }
-      // After dispatch({ type: "LOAD_CART", payload: items })
       const couponData = localStorage.getItem("appliedCoupon");
       if (couponData) {
         try {
@@ -278,7 +268,6 @@ export function CartProvider({ children }: { children: ReactNode }) {
     }
   }, [state.couponCode, state.discount, state.finalTotal]);
 
-  // Your existing useEffect for guest persistence
   useEffect(() => {
     if (!user && !loading) {
       localStorage.setItem("cart", JSON.stringify(state.items));
@@ -293,9 +282,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
     }
   }, [state.couponCode, state.discount, state.finalTotal]);
 
-  // --- 4. ACTION FUNCTIONS: UPGRADED ---
   const applyCoupon = async (code: string) => {
-    dispatch({ type: "APPLY_COUPON_FAIL", payload: { error: "" } }); // Clear previous error
+    dispatch({ type: "APPLY_COUPON_FAIL", payload: { error: "" } }); 
     if (!user) {
       dispatch({
         type: "APPLY_COUPON_FAIL",
@@ -322,7 +310,6 @@ export function CartProvider({ children }: { children: ReactNode }) {
     dispatch({ type: "REMOVE_COUPON" });
   };
 
-  // Your existing action functions
   const addToCart = async (item: Omit<CartItem, "quantity" | "cartItemId">) => {
     if (user) {
       try {
@@ -391,7 +378,6 @@ export function CartProvider({ children }: { children: ReactNode }) {
   );
 }
 
-// --- 5. THE HOOK ---
 export function useCart() {
   const context = useContext(CartContext);
   if (!context) {

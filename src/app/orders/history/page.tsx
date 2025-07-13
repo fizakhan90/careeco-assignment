@@ -45,7 +45,7 @@ export default function OrderHistoryPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
 
-  // --- Fetch Orders from Your Backend ---
+  // --- Fetch Orders from Backend ---
   useEffect(() => {
     const fetchOrders = async () => {
       if (!user) {
@@ -108,7 +108,6 @@ export default function OrderHistoryPage() {
         throw new Error(errorData.message || 'Failed to cancel order');
       }
 
-      // Optimistically update the UI to show the new "Cancelled" status
       setOrders(prevOrders =>
         prevOrders.map(o => (o._id === orderId ? { ...o, status: 'Cancelled' } : o))
       );

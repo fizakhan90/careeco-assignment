@@ -23,14 +23,12 @@ export const clearServerCart = async () => {
 export const applyCouponToServer = async (code: string, cartTotal: number) => {
   try {
     const token = localStorage.getItem('token');
-    // We send the code and the current cart total for the backend to calculate the discount.
     const { data } = await api.post('/coupons/apply', 
       { code, cartTotal },
       { headers: { Authorization: `Bearer ${token}` } }
     );
-    return data; // Returns { discount, discountedTotal } on success
+    return data; 
   } catch (error: any) {
-    // Re-throw the error with the message from the backend
     throw new Error(error.response?.data?.message || 'Coupon application failed');
   }
 };

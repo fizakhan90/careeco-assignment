@@ -4,7 +4,6 @@ import Order from '../models/Order.js';
 // @desc    Place new order
 // @route   POST /api/orders
 const placeOrder = asyncHandler(async (req, res) => {
-  // We get all the data from the frontend request body
   const { shippingAddress, orderItems, totalPrice, paymentMethod } = req.body;
 
   // Determine if this is a guest checkout.
@@ -21,7 +20,7 @@ const placeOrder = asyncHandler(async (req, res) => {
     totalPrice,
     paymentMethod,
     status: 'Processing',
-    isPaid: true,               // ✅ Mark as paid
+    isPaid: true,               
     paidAt: Date.now() 
   });
 
