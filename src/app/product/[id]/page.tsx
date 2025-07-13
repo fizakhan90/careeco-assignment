@@ -32,6 +32,29 @@ interface Product {
   sizes?: string[]
   colors?: string[]
   features: string[]
+  // Add missing properties that might come from API
+  image?: string
+  numReviews?: number
+  isAvailable?: boolean
+}
+
+interface ApiProduct {
+  _id: string
+  name: string
+  brand: string
+  category: string
+  description: string
+  price: number
+  image: string
+  rating?: number
+  numReviews?: number
+  isAvailable?: boolean
+  sizes?: string[]
+}
+
+interface ApiResponse {
+  product: ApiProduct
+  betterDeals: ApiProduct[]
 }
 
 export default function ProductDetailPage() {
@@ -59,7 +82,7 @@ export default function ProductDetailPage() {
 
         if (!res.ok) throw new Error("Product not found")
 
-        const data = await res.json()
+        const data: ApiResponse = await res.json()
 
         const formattedProduct: Product = {
           _id: data.product._id,
@@ -78,8 +101,26 @@ export default function ProductDetailPage() {
           features: []
         }
 
+        // Format better deals
+        const formattedBetterDeals: Product[] = data.betterDeals.map((deal) => ({
+          _id: deal._id,
+          name: deal.name,
+          brand: deal.brand,
+          category: deal.category,
+          description: deal.description,
+          price: deal.price,
+          originalPrice: undefined,
+          images: [deal.image],
+          rating: deal.rating ?? 4,
+          reviews: deal.numReviews ?? 0,
+          inStock: deal.isAvailable ?? true,
+          sizes: deal.sizes ?? [],
+          colors: [],
+          features: []
+        }))
+
         setProduct(formattedProduct)
-        setBetterDeals(data.betterDeals)
+        setBetterDeals(formattedBetterDeals)
         setSelectedColor(formattedProduct.colors?.[0] || "")
         setSelectedSize(formattedProduct.sizes?.[0] || "")
       } catch (error) {
@@ -217,7 +258,7 @@ export default function ProductDetailPage() {
             </div>
 
             {/* 📏 Size Selection */}
-            {product.sizes.length > 0 && (
+            {product.sizes && product.sizes.length > 0 && (
               <div className="space-y-3">
                 <h3 className="font-semibold text-gray-800 text-lg">Size</h3>
                 <div className="flex gap-2 flex-wrap">
@@ -270,10 +311,11 @@ export default function ProductDetailPage() {
               {isLoggedIn ? (
                 <Button
                   onClick={handleAddToCart}
-                  className="w-full h-14 bg-gradient-to-r from-blue-600 to-purple-600 text-white text-lg font-semibold hover:from-blue-700 hover:to-purple-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+                  disabled={!product.inStock}
+                  className="w-full h-14 bg-gradient-to-r from-blue-600 to-purple-600 text-white text-lg font-semibold hover:from-blue-700 hover:to-purple-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
                 >
                   <ShoppingCart className="h-5 w-5 mr-2" />
-                  Add to Cart - ₹{(product.price * quantity).toLocaleString()}
+                  {product.inStock ? `Add to Cart - ₹${(product.price * quantity).toLocaleString()}` : 'Out of Stock'}
                 </Button>
               ) : (
                 <Link href="/login">
@@ -339,14 +381,7 @@ export default function ProductDetailPage() {
               {betterDeals.map((deal) => (
                 <div key={deal._id} className="snap-start flex-shrink-0 w-72">
                   <ProductCard
-                    product={{
-                      ...deal,
-                      images: [deal.images ?? "/placeholder.svg"],
-                      rating: deal.rating ?? 4,
-                      reviews: deal.reviews ?? 0,
-                      inStock: deal.isAvailable ?? true,
-                      features: [],
-                    }}
+                    product={deal}
                   />
                 </div>
               ))}
