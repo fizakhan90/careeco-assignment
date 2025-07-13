@@ -15,7 +15,14 @@ import {
   Search
 } from 'lucide-react';
 
-export default function TrackOrderPage({ params }: { params: { id: string } }) {
+interface PageProps {
+  params: {
+    id: string;
+  };
+}
+
+export default async function TrackOrderPage({ params }: PageProps) {
+  const { id } = params;
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
       <Navbar />
