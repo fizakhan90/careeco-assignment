@@ -16,13 +16,11 @@ import {
 } from 'lucide-react';
 
 interface PageProps {
-  params: {
-    id: string;
-  };
+  params: { id: string };
 }
 
-export default async function TrackOrderPage({ params }: PageProps) {
-  const { id } = params;
+export default async function TrackOrderPage(props: PageProps) {
+  const { id } = props.params;
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
       <Navbar />
@@ -35,7 +33,7 @@ export default async function TrackOrderPage({ params }: PageProps) {
             Back to Order History
           </Link>
           <h1 className="text-4xl font-bold text-gray-900 mb-2">Track Your Order</h1>
-          <p className="text-gray-600">Order #{params.id}</p>
+          <p className="text-gray-600">Order #{id}</p>
         </div>
 
         {/* Main Content Card */}
