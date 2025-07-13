@@ -44,7 +44,7 @@ export default function ProductCard({ product }: ProductCardProps) {
     setIsAdding(true)
     
     try {
-.
+
       await addToCart(product)
       
       setJustAdded(true)
