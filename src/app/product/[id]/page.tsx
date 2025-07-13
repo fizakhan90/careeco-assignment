@@ -32,7 +32,6 @@ interface Product {
   sizes?: string[]
   colors?: string[]
   features: string[]
-  // Add missing properties that might come from API
   image?: string
   numReviews?: number
   isAvailable?: boolean
