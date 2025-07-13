@@ -16,11 +16,12 @@ import {
 } from 'lucide-react';
 
 interface PageProps {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }
 
 export default async function TrackOrderPage(props: PageProps) {
-  const { id } = props.params;
+  const params = await props.params;
+  const { id } = params;
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
       <Navbar />
