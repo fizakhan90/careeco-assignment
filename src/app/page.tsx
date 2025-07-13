@@ -185,7 +185,15 @@ export default function HomePage() {
     <div className="space-y-6">
       <div>
         <h3 className="font-semibold mb-3 flex items-center gap-2"><span>Price Range</span><Badge variant="outline" className="text-xs">${priceRange[0]} - ${priceRange[1]}</Badge></h3>
-        <Slider value={priceRange} onValueChange={setPriceRange} max={maxPrice} min={0} step={1} className="mb-3" />
+
+<Slider 
+  value={priceRange} 
+  onValueChange={(value) => setPriceRange(value as [number, number])} 
+  max={maxPrice} 
+  min={0} 
+  step={1} 
+  className="mb-3" 
+/>
         <div className="flex justify-between text-sm text-gray-500"><span>$0</span><span>${maxPrice}</span></div>
       </div>
       <div>
