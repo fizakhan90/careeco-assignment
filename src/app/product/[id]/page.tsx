@@ -55,7 +55,7 @@ export default function ProductDetailPage() {
     const fetchProduct = async () => {
       setLoading(true)
       try {
-        const res = await fetch(`http://localhost:5000/api/products/${id}`)
+        const res = await fetch(`https://careeco-assignment.onrender.com/api/products/${id}`)
 
         if (!res.ok) throw new Error("Product not found")
 

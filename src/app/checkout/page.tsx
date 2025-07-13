@@ -96,7 +96,7 @@ export default function CheckoutPage() {
     }
 
     try {
-      const response = await fetch(`http://localhost:5000/api/orders`, {
+      const response = await fetch(`https://careeco-assignment.onrender.com/api/orders`, {
         method: "POST",
         headers: headers,
         body: JSON.stringify(orderPayload),

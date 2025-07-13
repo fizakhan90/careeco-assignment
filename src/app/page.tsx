@@ -52,7 +52,7 @@ export default function HomePage() {
     const fetchProducts = async () => {
       setLoading(true);
       try {
-        const res = await fetch("http://localhost:5000/api/products");
+        const res = await fetch("https://careeco-assignment.onrender.com/api/products");
         const data = await res.json();
         setProducts(data);
         setFilteredProducts(data);
@@ -81,11 +81,11 @@ export default function HomePage() {
         if (selectedCategories.length === 1) {
           const category = encodeURIComponent(selectedCategories[0]);
           const q = encodeURIComponent(searchQuery.trim());
-          url = `http://localhost:5000/api/products/category/${category}?q=${q}`;
+          url = `https://careeco-assignment.onrender.com/api/products/category/${category}?q=${q}`;
         } else if (searchQuery.trim()) {
-          url = `http://localhost:5000/api/products/search?q=${encodeURIComponent(searchQuery.trim())}`;
+          url = `https://careeco-assignment.onrender.com/api/products/search?q=${encodeURIComponent(searchQuery.trim())}`;
         } else {
-          url = "http://localhost:5000/api/products";
+          url = "https://careeco-assignment.onrender.com/api/products";
         }
 
         const res = await fetch(url);
@@ -93,7 +93,7 @@ export default function HomePage() {
         setFilteredProducts(data);
 
         if (data.length === 0 && searchQuery.trim()) {
-          const suggestRes = await fetch(`http://localhost:5000/api/products/suggest?q=${encodeURIComponent(searchQuery.trim())}`);
+          const suggestRes = await fetch(`https://careeco-assignment.onrender.com/api/products/suggest?q=${encodeURIComponent(searchQuery.trim())}`);
           const suggestData = await suggestRes.json();
           setSuggestions(suggestData);
         } else {

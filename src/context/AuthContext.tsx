@@ -44,7 +44,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const login = async (email: string, password: string): Promise<boolean> => {
   try {
-    const res = await fetch("http://localhost:5000/api/users/login", {
+    const res = await fetch("https://careeco-assignment.onrender.com/api/users/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -69,7 +69,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const register = async (name: string, email: string, password: string): Promise<boolean> => {
   try {
-    const res = await fetch("http://localhost:5000/api/users/register", {
+    const res = await fetch("https://careeco-assignment.onrender.com/api/users/register", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
