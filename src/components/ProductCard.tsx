@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { ShoppingCart, Heart, Star, Eye, Check } from 'lucide-react'
 import { toast } from "sonner"
-import { useCart } from "@/lib/cart-context" // <-- 1. IMPORT THE CART CONTEXT HOOK
+import { useCart } from "@/context/CartContext" // <-- 1. IMPORT THE CART CONTEXT HOOK
 
 // Define the shape of the product
 interface Product {

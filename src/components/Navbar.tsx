@@ -13,9 +13,9 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import CartSheet from "@/components/cart-sheet";
+import CartSheet from "@/components/CartSheet";
 import { useAuth } from "@/context/AuthContext";
-import { useCart } from "@/lib/cart-context";
+import { useCart } from "@/context/CartContext";
 
 export default function Navbar() {
   const { user, logout } = useAuth();

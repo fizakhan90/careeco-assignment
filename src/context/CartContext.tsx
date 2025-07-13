@@ -15,7 +15,7 @@ import {
   removeFromServerCart,
   clearServerCart,
   applyCouponToServer, // <-- Import the new API function
-} from "./cartApi";
+} from "../lib/cartApi";
 
 // --- 1. TYPES: UPGRADED ---
 interface CartItem {

@@ -1,7 +1,7 @@
 import type { Metadata } from "next"
 import { Inter } from 'next/font/google'
 import "./globals.css"
-import { CartProvider } from "@/lib/cart-context"
+import { CartProvider } from "@/context/CartContext"
 import { AuthProvider } from "@/context/AuthContext"
 import { Toaster } from "sonner"
 

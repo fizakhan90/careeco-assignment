@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
 import { Separator } from "@/components/ui/separator"
-import { useCart } from "@/lib/cart-context"
+import { useCart } from "@/context/CartContext"
 import { useAuth } from "@/context/AuthContext"
 import { Label } from "@/components/ui/label" // Corrected import
 import { Input } from "./ui/input"
